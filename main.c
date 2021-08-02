@@ -175,20 +175,6 @@ int main() {
     } else {
         printf("No reservation\n");
     }
-    //struct Flight *found = fs.searchFlightByNumber(&fs, 1);
-    //found->printFlightwPassenger(found);
-    //int flightnumber;
-    char* first_name;
-    char* last_name;
-    //printf("Please enter a flight number: ");
-    scanf("%s %s", &first_name,&last_name);
-    struct Flight *f = fs.searchFlightByName(&fs,first_name,last_name);
-
-    //char departureCity;
-    //printf("please enter departure city:");
-    //scanf("%s", &departureCity);
-    //struct Flight *f = fs.searchFlightByDepartureCity(&fs, &departureCity);
-    //fs.printFlight(f);
 
     return 0;
 }
