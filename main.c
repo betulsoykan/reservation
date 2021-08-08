@@ -48,7 +48,7 @@ struct FlightStore {
 
     struct Flight *(*searchFlightByName)(struct FlightStore *self, const char *firstname, const char *lastname);
 
-    void (*printR)(struct FlightStore *self,const char *firstName,const char *lastName);
+    void (*printR)(struct FlightStore *self, const char *firstName, const char *lastName);
 };
 
 void addPassenger_(struct Flight *self, struct Passenger *passenger) {
@@ -125,7 +125,7 @@ struct Flight *searchFlightByName_(struct FlightStore *self, const char *firstna
     for (int i = 0; i < (self->flightCount); i++) {
         for (int j = 0; j < self->flights[i].passengerCount; j++) {
             if ((self->flights[i].passengers[j].FirstName) == firstname &&
-                (self->flights[i].passengers[j].LastName) == lastname){
+                (self->flights[i].passengers[j].LastName) == lastname) {
                 struct Flight *flight = &self->flights[i];
                 return flight;
             }
@@ -135,14 +135,13 @@ struct Flight *searchFlightByName_(struct FlightStore *self, const char *firstna
     return NULL;
 }
 
-void printReservation_(struct FlightStore *self,const char *firstName,const char *lastName){
-     struct Flight *flight = self->searchFlightByName(self,firstName,lastName);
-     if (flight == NULL){
-         printf("No reservation!");
-     }
-     else{
-         printf("%s %s %d %s %s",firstName,lastName,flight->Number,flight->DepartureCity,flight->ArrivalCity);
-     }
+void printReservation_(struct FlightStore *self, const char *firstName, const char *lastName) {
+    struct Flight *flight = self->searchFlightByName(self, firstName, lastName);
+    if (flight == NULL) {
+        printf("No reservation!");
+    } else {
+        printf("%s %s %d %s %s", firstName, lastName, flight->Number, flight->DepartureCity, flight->ArrivalCity);
+    }
 }
 
 void printFlight_(struct Flight *f) {
@@ -153,7 +152,59 @@ void printFlight_(struct Flight *f) {
     }
 }
 
-int main() {
+char *readLineForwardFrom(FILE *in_file, int reqLine) {
+    char line[1000] = "";
+    char *found = malloc(1000);
+    int current = 0;
+    while (fgets(line, 1000, in_file) != NULL) {
+        if (current == reqLine) {
+            strcpy(found, line);
+            fseek(in_file, 0, SEEK_SET);
+            return found;
+        } else {
+            current++;
+        }
+    }
+    fseek(in_file, 0, SEEK_SET);
+    return found;
+}
+
+int readFile(char *fileName) {
+    int lineCount = 0;
+    printf("reading the file: %s\n", fileName);
+    FILE *in_file = fopen(fileName, "r");
+    if (in_file == NULL) {
+        printf("Error! Could not open file\n");
+        exit(-1);
+    }
+    char *flightCount = readLineForwardFrom(in_file, lineCount);
+    lineCount++;
+    printf("flightCount: %d\n", atoi(flightCount));
+    while(lineCount <= atoi(flightCount)) {
+        printf("flight: %s\n", readLineForwardFrom(in_file,lineCount));
+        lineCount++;
+    }
+    char *reservationCount = readLineForwardFrom(in_file, lineCount);
+    lineCount++;
+    printf("ReservationCount: %d\n", atoi(reservationCount));
+    for(int i = 0;i < atoi(reservationCount);i++) {
+        printf("reservation: %s\n", readLineForwardFrom(in_file,lineCount));
+        lineCount++;
+    }
+    return 1;
+}
+
+int main(int argc, char **argv) {
+    if (argc != 2) {
+        printf("you are not allowed to enter more than one file. File count: %d", argc - 1);
+        return -1;
+    }
+    /* for (int i = 0; i < argc; ++i) {
+         printf("argv[%d]: %s\n", i, argv[i]);
+     }*/
+
+    readFile(argv[1]);
+    /*
     struct FlightStore fs = {0, malloc(2 * sizeof(struct Flight)), addFlight_, makeReservation_,
                              searchFlightByNumber_, searchFlightByDepartureCity_, searchFlightByArrivalCity_,
                              searchFlightByName_,printReservation_};
@@ -175,6 +226,7 @@ int main() {
     } else {
         printf("No reservation\n");
     }
+    */
 
     return 0;
 }
